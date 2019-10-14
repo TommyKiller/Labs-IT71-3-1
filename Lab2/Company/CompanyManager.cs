@@ -39,11 +39,51 @@ namespace Lab2
             }
             Positions.Add(new Worker(name));
         }
+        public void AddHead(string position)
+        {
+            AddManager(position);
+            if (Company.Head == null)
+            {
+                SetHead(position);
+            }
+            else
+            {
+                ChangeHead(position);
+            }
+        }
         public void SetHead(string position)
         {
-            if (Positions.Contains(Positions.Find(item => item.Name == position)))
+            Position manager = Positions.Find(item => item.Name == position);
+            if (Positions.Contains(manager))
             {
-                Company.Head = Positions.Find(item => item.Name == position);
+                if (manager is Manager)
+                {
+                    Company.Head = Positions.Find(item => item.Name == position);
+                }
+                else
+                {
+                    throw new Exception("Only a manager could head the company!");
+                }
+            }
+            else
+            {
+                throw new Exception("Such a position doesn`t exist!");
+            }
+        }
+        public void ChangeHead(string position)
+        {
+            Position manager = Positions.Find(item => item.Name == position);
+            if (Positions.Contains(manager))
+            {
+                if (manager is Manager)
+                {
+                    Company.Head = Positions.Find(item => item.Name == position);
+                    // Add Subordinate;
+                }
+                else
+                {
+                    throw new Exception("Only a manager could head the company!");
+                }
             }
             else
             {
