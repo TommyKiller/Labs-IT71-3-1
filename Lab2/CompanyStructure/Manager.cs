@@ -8,7 +8,42 @@ namespace Lab2
     {
         public Manager(string name)
             : base(name)
-        { }
+        {
+            Subordinates = new HashSet<Position>();
+        }
+
+        //
+        // Manager interface
+        //
+        public void RemoveSubordinate(Position position)
+        {
+            Subordinates.Remove(position);
+            position.Supervisor = null;
+        }
+
+        public void AddSubordinate(Position position)
+        {
+            Subordinates.Add(position);
+            position.Supervisor = this;
+        }
+
+        //
+        // Position interface
+        //
+        public override Position Remove()
+        {
+            foreach(Position subordinate in Subordinates)
+            {
+                Supervisor.GetManager().AddSubordinate(subordinate);
+            }
+            Supervisor.GetManager().RemoveSubordinate(this);
+            return this;
+        }
+
+        public override Manager GetManager()
+        {
+            return this;
+        }
 
         public override Position Find(string name)
         {
@@ -18,6 +53,10 @@ namespace Lab2
                 foreach(Position subordinate in Subordinates)
                 {
                     position = subordinate.Find(name);
+                    if (!(position is null))
+                    {
+                        return position;
+                    }
                 }
                 return position;
             }
@@ -32,6 +71,9 @@ namespace Lab2
             formatter.AcceptManager(this);
         }
 
+        //
+        // Public members
+        //
         public HashSet<Position> Subordinates { get; private set; }
     }
 }

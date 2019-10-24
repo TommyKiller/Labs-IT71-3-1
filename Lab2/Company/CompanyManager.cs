@@ -12,83 +12,91 @@ namespace Lab2
             Console.WriteLine("Now managing company: " + Company.Name);
         }
 
-        public void ListPositions(string mode)
+        public void ListPositions(string formatter)
         {
-            if (Formatters.ContainsKey(mode))
+            if (Formatters.ContainsKey(formatter))
             {
-                Company.Head.AcceptFormatter(Formatters[mode]);
+                Company.Head.AcceptFormatter(Formatters[formatter]);
             }
             else
             {
                 throw new Exception("Unknown formatter type!");
             }
         }
-        public void AddManager(string name)
+        // Managing positions
+        public void Remove(string name)
         {
-            if (Positions.Contains(Positions.Find(item => item.Name == name)))
+            Position result = Find(name);
+            if (Company.Head == result)
             {
-                throw new Exception("Position already exists!");
+                throw new Exception("You cannot remove head! Use chead to change it.");
             }
-            Positions.Add(new Manager(name));
+            result.Remove();
         }
-        public void AddWorker(string name)
+        public void ChangeHead(string name)
         {
-            if (Positions.Contains(Positions.Find(item => item.Name == name)))
-            {
-                throw new Exception("Position already exists!");
-            }
-            Positions.Add(new Worker(name));
+            CheckExistance(name);
+            Position NewHead = CreateManager(name);
+            Subordinate(Company.Head, NewHead);
+            Company.Head.Remove();
+            Company.SetHead(NewHead.GetManager());
         }
-        public void AddHead(string position)
+        public void NewHead(string name)
         {
-            AddManager(position);
-            if (Company.Head == null)
+            if (Company.HasHead())
             {
-                SetHead(position);
+                throw new Exception("Head already exists! Use chead to change head");
             }
-            else
+            Company.SetHead(CreateManager(name).GetManager());
+        }
+        public void AddWorker(string name, string supervisor)
+        {
+            CheckExistance(name);
+            Subordinate(CreateWorker(name), Find(supervisor));
+        }
+        public void AddManager(string name, string supervisor)
+        {
+            CheckExistance(name);
+            Subordinate(CreateManager(name), Find(supervisor));
+        }
+        private void Subordinate(Position subordinate, Position supervisor)
+        {
+            if (supervisor.GetManager() is null)
             {
-                ChangeHead(position);
+                throw new Exception(String.Format("Supervisor position {0} is not a manager position!", supervisor));
+            }
+            supervisor.GetManager().AddSubordinate(subordinate);
+        }
+        // Service tools
+        private Position Find(string name)
+        {
+            Position result = Company.Head.Find(name);
+            if (result is null)
+            {
+                throw new Exception("Such a position does not exist!");
+            }
+            return result;
+        }
+        private void CheckExistance(string name)
+        {
+            if (!Company.HasHead())
+            {
+                throw new Exception("Add head of the copmany first!");
+            }
+            Position result = Company.Head.Find(name);
+            if (!(result is null))
+            {
+                throw new Exception(String.Format("Position {0} already exists!", name));
             }
         }
-        public void SetHead(string position)
+        // Factory methods
+        private Position CreateManager(string name)
         {
-            Position manager = Positions.Find(item => item.Name == position);
-            if (Positions.Contains(manager))
-            {
-                if (manager is Manager)
-                {
-                    Company.Head = Positions.Find(item => item.Name == position);
-                }
-                else
-                {
-                    throw new Exception("Only a manager could head the company!");
-                }
-            }
-            else
-            {
-                throw new Exception("Such a position doesn`t exist!");
-            }
+            return new Manager(name);
         }
-        public void ChangeHead(string position)
+        private Position CreateWorker(string name)
         {
-            Position manager = Positions.Find(item => item.Name == position);
-            if (Positions.Contains(manager))
-            {
-                if (manager is Manager)
-                {
-                    Company.Head = Positions.Find(item => item.Name == position);
-                    // Add Subordinate;
-                }
-                else
-                {
-                    throw new Exception("Only a manager could head the company!");
-                }
-            }
-            else
-            {
-                throw new Exception("Such a position doesn`t exist!");
-            }
+            return new Worker(name);
         }
 
         private Dictionary<string, PositionFormatter> Formatters = new Dictionary<string, PositionFormatter>
@@ -97,6 +105,5 @@ namespace Lab2
             { "height", new PositionHeightFormatter() }
         };
         private Company Company { get; set; }
-        public List<Position> Positions = new List<Position>();
     }
 }

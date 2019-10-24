@@ -9,9 +9,20 @@ namespace Lab2
         public Company(string name)
         {
             Name = name;
+            Head = null;
         }
 
-        public Position Head { get; set; }
+        public void SetHead(Manager manager)
+        {
+            Head = manager;
+        }
+
+        public bool HasHead()
+        {
+            return !(Head is null);
+        }
+
+        public Position Head { get; private set; }
         public string Name { get; private set; }
     }
 }

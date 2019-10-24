@@ -10,6 +10,15 @@ namespace Lab2
             : base(name)
         { }
 
+        //
+        // Position interface
+        //
+        public override Position Remove()
+        {
+            Supervisor.GetManager().RemoveSubordinate(this);
+            return this;
+        }
+
         public override Position Find(string name)
         {
             if (Name != name)
