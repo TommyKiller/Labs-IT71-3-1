@@ -8,12 +8,16 @@ namespace Lab2
     {
         public override void AcceptManager(Manager manager)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(manager + ":");
+            foreach (Position position in manager.Subordinates)
+            {
+                position.AcceptFormatter(this);
+            }
         }
 
         public override void AcceptWorker(Worker worker)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(worker);
         }
     }
 }
