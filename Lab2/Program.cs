@@ -56,9 +56,38 @@ namespace Lab2
             { "worker", new ConsoleCommand(AddWorker, "Creates new worker and subs it to a manager.") },
             { "nhead", new ConsoleCommand(NewHead, "Set new manager as a head.") },
             { "chead", new ConsoleCommand(ChangeHead, "Set new manager as a head.") },
-            { "remove", new ConsoleCommand(Remove, "Removes the position.") }
+            { "remove", new ConsoleCommand(Remove, "Removes the position.") },
+            { "hire", new ConsoleCommand(Hire, "Hire new employee. --name --salary -- position") },
+            { "fire", new ConsoleCommand(Fire, "Fire the empoyee. --id") },
+            { "appoint", new ConsoleCommand(Appoint, "Appoint an employee to a new position. --id --position") },
+            { "get", new ConsoleCommand(Get, "Get employee by name. --name") },
+            { "filter", new ConsoleCommand(Get, "Filter employees by criterion. --criterion") }
         };
 
+        private static void Get(string[] command)
+        {
+            CheckParamsCount(command, 2);
+
+            Manager.Get(command[1]);
+        }
+        private static void Appoint(string[] command)
+        {
+            CheckParamsCount(command, 3);
+
+            Manager.Appoint(command[1], command[2]);
+        }
+        private static void Fire(string[] command)
+        {
+            CheckParamsCount(command, 2);
+
+            Manager.Fire(command[1]);
+        }
+        private static void Hire(string[] command)
+        {
+            CheckParamsCount(command, 4);
+
+            Manager.Hire(command[1], command[2], command[3]);
+        }
         private static void Remove(string[] command)
         {
             CheckParamsCount(command, 2);

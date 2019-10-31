@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lab2
 {
@@ -24,6 +24,37 @@ namespace Lab2
             }
         }
         // Managing positions
+        public void Get(string filtrator)
+        {
+            if (Filtrators.ContainsKey(filtrator))
+            {
+                Company.AcceptFiltrator(Filtrators[filtrator]);
+            }
+            else
+            {
+                throw new Exception("Unknown filtrator type!");
+            }
+        }
+        public void Appoint(string id, string position)
+        {
+            Employee man = Company.GetEmployee(new EmployeeID(int.Parse(id)));
+            man.Appoint(Find(position));
+        }
+        public void Fire(string id)
+        {
+            Employee man = Company.GetEmployee(new EmployeeID(int.Parse(id)));
+            Company.Fire(man);
+        }
+        public void Hire(string name, string salary, string position)
+        {
+            Regex regex = new Regex("^([A-Za-z]+).?( [A-Za-z].?)*$");
+            if (!regex.IsMatch(name))
+            {
+                throw new Exception("Wrong name style!");
+            }
+
+            Company.Hire(new Employee(name, int.Parse(salary), Find(position)));
+        }
         public void Remove(string name)
         {
             Position result = Find(name);
@@ -103,6 +134,14 @@ namespace Lab2
         {
             { "order", new DirectOrderFormatter() },
             { "height", new PositionHeightFormatter() }
+        };
+        private Dictionary<string, Filtrator> Filtrators = new Dictionary<string, Filtrator>
+        {
+            { "name", new NameFiltrator() },
+            { "position", new PositionFiltrator() },
+            { "salary-max", new MaxSalaryFiltrator() },
+            { "salary-more-then", new SalaryFiltrator() },
+            { "manager", new ManagerFiltrator() }
         };
         private Company Company { get; set; }
     }
