@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Lab2
 {
@@ -7,8 +8,22 @@ namespace Lab2
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter company name: ");
-            Manager = new CompanyManager(new Company(Console.ReadLine()));
+            bool ok = false;
+            while(!ok)
+            {
+                Console.Write("Enter company name: ");
+                string company_name = Console.ReadLine();
+                Regex company_name_pattern = new Regex("^[A-Za-z][-A-Za-z ,.\"\"]*$");
+                if (company_name_pattern.IsMatch(company_name))
+                {
+                    Manager = new CompanyManager(new Company(company_name));
+                    ok = true;
+                }
+                else
+                {
+                    Console.WriteLine("Wrong company name format!");
+                }
+            }
 
             while(!ShouldClose)
             {
@@ -57,7 +72,7 @@ namespace Lab2
             { "nhead", new ConsoleCommand(NewHead, "Set new manager as a head.") },
             { "chead", new ConsoleCommand(ChangeHead, "Set new manager as a head.") },
             { "remove", new ConsoleCommand(Remove, "Removes the position.") },
-            { "hire", new ConsoleCommand(Hire, "Hire new employee. --name --salary -- position") },
+            { "hire", new ConsoleCommand(Hire, "Hire new employee.") },
             { "fire", new ConsoleCommand(Fire, "Fire the empoyee. --id") },
             { "appoint", new ConsoleCommand(Appoint, "Appoint an employee to a new position. --id --position") },
             { "get", new ConsoleCommand(Get, "Get employee by name. --name") },
@@ -84,9 +99,9 @@ namespace Lab2
         }
         private static void Hire(string[] command)
         {
-            CheckParamsCount(command, 4);
+            CheckParamsCount(command, 1);
 
-            Manager.Hire(command[1], command[2], command[3]);
+            Manager.Hire();
         }
         private static void Remove(string[] command)
         {

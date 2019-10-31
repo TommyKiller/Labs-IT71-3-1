@@ -45,15 +45,45 @@ namespace Lab2
             Employee man = Company.GetEmployee(new EmployeeID(int.Parse(id)));
             Company.Fire(man);
         }
-        public void Hire(string name, string salary, string position)
+        public void Hire()
         {
-            Regex regex = new Regex("^([A-Za-z]+).?( [A-Za-z].?)*$");
-            if (!regex.IsMatch(name))
+            bool ok = false;
+            string name = "";
+            while (!ok)
             {
-                throw new Exception("Wrong name style!");
+                Console.Write("\tEnter a name: ");
+                name = Console.ReadLine();
+                Regex name_pattern = new Regex("^([A-Za-z]+.?)( [A-Za-z]+.?)*$");
+                if (name_pattern.IsMatch(name))
+                {
+                    ok = true;
+                }
+                else
+                {
+                    Console.WriteLine("\tWrong name format!");
+                }
+            }
+            ok = false;
+            int salary = 0;
+            while (!ok)
+            {
+                Console.Write("\tEnter salary: ");
+                salary = int.Parse(Console.ReadLine());
+
+                if (salary > 0)
+                {
+                    ok = true;
+                }
+                else
+                {
+                    Console.WriteLine("\tSalary must be higher then 0!");
+                }
             }
 
-            Company.Hire(new Employee(name, int.Parse(salary), Find(position)));
+            Console.Write("\tEnter position: ");
+            string position = Console.ReadLine();
+
+            Company.Hire(new Employee(name, salary, Find(position)));
         }
         public void Remove(string name)
         {
