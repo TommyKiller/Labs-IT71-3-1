@@ -43,6 +43,11 @@ namespace Lab2
             return !(Head is null);
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public List<Employee> Employees;
         public Position Head { get; private set; }
         public string Name { get; private set; }

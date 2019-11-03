@@ -14,7 +14,7 @@ namespace Lab2
             List<Employee> result = company.Employees.FindAll(employee => employee.Salary >= salary);
             if (result.Count == 0)
             {
-                throw new Exception("No matches found!");
+                throw new NoMatchesFoundException();
             }
 
             Console.WriteLine("\t\tID\tName\tSalary\tPosition");

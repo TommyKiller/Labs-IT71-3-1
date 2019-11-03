@@ -14,13 +14,13 @@ namespace Lab2
             Position result_position = company.Head.Find(position);
             if (result_position is null)
             {
-                throw new Exception("Such a position does not exist!");
+                throw new PositionDoesNotExistException(String.Format("{0} position does not exist!", position));
             }
 
             List<Employee> result = company.Employees.FindAll(employee => employee.Position == result_position);
             if (result.Count == 0)
             {
-                throw new Exception("No matches found!");
+                throw new NoMatchesFoundException();
             }
 
             Console.WriteLine("\t\tID\tName\tSalary\tPosition");

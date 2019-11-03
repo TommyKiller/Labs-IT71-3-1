@@ -20,7 +20,7 @@ namespace Lab2
             }
             else
             {
-                throw new Exception("Unknown formatter type!");
+                throw new UnknownTypeException("Unknown formatter type!");
             }
         }
         // Managing positions
@@ -32,7 +32,7 @@ namespace Lab2
             }
             else
             {
-                throw new Exception("Unknown filtrator type!");
+                throw new UnknownTypeException("Unknown filtrator type!");
             }
         }
         public void Appoint(string id, string position)
@@ -45,52 +45,28 @@ namespace Lab2
             Employee man = Company.GetEmployee(new EmployeeID(int.Parse(id)));
             Company.Fire(man);
         }
-        public void Hire()
+        public void Hire(string name, string salary, string position)
         {
-            bool ok = false;
-            string name = "";
-            while (!ok)
+            Regex name_pattern = new Regex("^([A-Za-z]+.?)( [A-Za-z]+.?)*$");
+            if (!name_pattern.IsMatch(name))
             {
-                Console.Write("\tEnter a name: ");
-                name = Console.ReadLine();
-                Regex name_pattern = new Regex("^([A-Za-z]+.?)( [A-Za-z]+.?)*$");
-                if (name_pattern.IsMatch(name))
-                {
-                    ok = true;
-                }
-                else
-                {
-                    Console.WriteLine("\tWrong name format!");
-                }
+                throw new FormatException(String.Format("{0} name has incorrect format.", name));
             }
-            ok = false;
-            int salary = 0;
-            while (!ok)
-            {
-                Console.Write("\tEnter salary: ");
-                salary = int.Parse(Console.ReadLine());
+            int int_salary = int.Parse(salary);
 
-                if (salary > 0)
-                {
-                    ok = true;
-                }
-                else
-                {
-                    Console.WriteLine("\tSalary must be higher then 0!");
-                }
+            if (int_salary < 0)
+            {
+                throw new ArgumentOutOfRangeException("Salary can not be leser then 0");
             }
 
-            Console.Write("\tEnter position: ");
-            string position = Console.ReadLine();
-
-            Company.Hire(new Employee(name, salary, Find(position)));
+            Company.Hire(new Employee(name, int_salary, Find(position)));
         }
         public void Remove(string name)
         {
             Position result = Find(name);
             if (Company.Head == result)
             {
-                throw new Exception("You cannot remove head! Use chead to change it.");
+                throw new CompanyHeadException("You cannot remove head! Use chead to change it.");
             }
             result.Remove();
         }
@@ -106,7 +82,7 @@ namespace Lab2
         {
             if (Company.HasHead())
             {
-                throw new Exception("Head already exists! Use chead to change head");
+                throw new CompanyHeadException("Head already exists! Use chead to change head");
             }
             Company.SetHead(CreateManager(name).GetManager());
         }
@@ -124,40 +100,40 @@ namespace Lab2
         {
             if (supervisor.GetManager() is null)
             {
-                throw new Exception(String.Format("Supervisor position {0} is not a manager position!", supervisor));
+                throw new PositionCanNotHaveSubordinatesException(String.Format("Supervisor position {0} is not a manager position!", supervisor));
             }
             supervisor.GetManager().AddSubordinate(subordinate);
         }
         // Service tools
-        private Position Find(string name)
+        private Position Find(string position)
         {
-            Position result = Company.Head.Find(name);
+            Position result = Company.Head.Find(position);
             if (result is null)
             {
-                throw new Exception("Such a position does not exist!");
+                throw new PositionDoesNotExistException(String.Format("{0} position does not exist!", position));
             }
             return result;
         }
-        private void CheckExistance(string name)
+        private void CheckExistance(string position)
         {
             if (!Company.HasHead())
             {
-                throw new Exception("Add head of the copmany first!");
+                throw new CompanyHeadException("Company has no head! Add head first!");
             }
-            Position result = Company.Head.Find(name);
+            Position result = Company.Head.Find(position);
             if (!(result is null))
             {
-                throw new Exception(String.Format("Position {0} already exists!", name));
+                throw new PositionAlreadyExistsException(String.Format("Position {0} already exists!", position));
             }
         }
         // Factory methods
-        private Position CreateManager(string name)
+        private Position CreateManager(string position_name)
         {
-            return new Manager(name);
+            return new Manager(position_name);
         }
-        private Position CreateWorker(string name)
+        private Position CreateWorker(string position_name)
         {
-            return new Worker(name);
+            return new Worker(position_name);
         }
 
         private Dictionary<string, PositionFormatter> Formatters = new Dictionary<string, PositionFormatter>

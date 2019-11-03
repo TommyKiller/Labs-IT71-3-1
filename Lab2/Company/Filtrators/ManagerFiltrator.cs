@@ -14,13 +14,13 @@ namespace Lab2
             Employee manager = company.GetEmployee(new EmployeeID(id));
             if (manager.Position.GetManager() is null)
             {
-                throw new Exception("That employee has no subordinates");
+                throw new PositionHasNoSubordinatesException(String.Format("{0} has no subordinates", manager));
             }
 
             List<Employee> result = company.Employees.FindAll(employee => manager.Position.GetManager().Subordinates.Contains(employee.Position));
             if (result.Count == 0)
             {
-                throw new Exception("That employee has no subordinates");
+                throw new PositionHasNoSubordinatesException(String.Format("{0} has no subordinates", manager));
             }
 
             Console.WriteLine("\t\tID\tName\tSalary\tPosition");

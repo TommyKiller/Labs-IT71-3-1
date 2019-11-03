@@ -99,9 +99,16 @@ namespace Lab2
         }
         private static void Hire(string[] command)
         {
-            CheckParamsCount(command, 1);
+            Console.Write("\tEnter a name: ");
+            string name = Console.ReadLine();
 
-            Manager.Hire();
+            Console.Write("\tEnter salary: ");
+            string salary = Console.ReadLine();
+
+            Console.Write("\tEnter position: ");
+            string position = Console.ReadLine();
+
+            Manager.Hire(name, salary, position);
         }
         private static void Remove(string[] command)
         {

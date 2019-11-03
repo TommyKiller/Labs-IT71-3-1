@@ -21,7 +21,7 @@ namespace Lab2
             List<Employee> result = company.Employees.FindAll(employee => employee.Salary == max_salary);
             if (result.Count == 0)
             {
-                throw new Exception("Company has no employees!");
+                throw new CompanyHasNoEmployeesException(String.Format("{0} has no employees!", company));
             }
 
             Console.WriteLine("\t\tID\tName\tSalary\tPosition");
